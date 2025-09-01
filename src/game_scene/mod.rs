@@ -1,16 +1,17 @@
-pub mod i_ware;
 pub mod main_menu;
 
 use raylib::prelude::*;
 
-struct SceneData {
+pub struct SceneData {
     score:u64,
     difficulty:u8,
+    pub flagged_for_finish: bool,
+    lost: bool,
 }
 
 impl SceneData {
     const fn new() -> Self {
-        Self { score: 0, difficulty: 0 }
+        Self { score: 0, difficulty: 0, flagged_for_finish: false, lost: false }
     }
 
     fn score_up(&mut self, gain: u64) {
@@ -19,6 +20,17 @@ impl SceneData {
 
     fn set_difficulty(&mut self, to: u8) {
         self.difficulty = to;
+    }
+
+    fn flag_for_finish(&mut self) {
+        self.flagged_for_finish = true;
+    }
+    
+    fn lose(&mut self) {
+        self.lost = true;
+    }
+    pub fn clear_flag(&mut self) {
+        self.flagged_for_finish = false;
     }
 }
 

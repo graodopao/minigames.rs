@@ -1,6 +1,7 @@
 mod game_scene;
 
 use std::ptr::null;
+use std::thread::current;
 use raylib::prelude::*;
 use crate::game_scene::GameScene;
 use crate::game_scene::main_menu::MainMenu;
@@ -36,6 +37,11 @@ fn main() {
     
     let default_font = raylib.get_font_default();
     while !raylib.window_should_close() {
+        if (current_scene.data.flagged_for_finish) {
+            break;
+            todo!("Place change minigames logic here")
+        }
+
         current_scene.update(&raylib, &thread);
 
         let mut draw_handle = raylib.begin_drawing(&thread);
