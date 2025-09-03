@@ -1,4 +1,5 @@
 pub mod main_menu;
+pub mod i_ware;
 
 use raylib::prelude::*;
 
@@ -38,10 +39,10 @@ impl SceneData {
 pub trait GameScene {
     //fn new() -> Self;
     fn start(&mut self);
-    fn update(&mut self, raylib: &RaylibHandle, thread: &RaylibThread);
+    fn update(&mut self, raylib: &mut RaylibHandle, thread: &RaylibThread);
     fn draw(&self, draw_handle: &mut RaylibDrawHandle);
     fn stop(&mut self);
-    
+
     fn has_started(&self) -> bool;
     fn is_flagged_for_finish(&self) -> bool;
 }

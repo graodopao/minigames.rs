@@ -22,9 +22,10 @@ impl GameScene for MainMenu {
 
     fn start(&mut self) {
         self.elapsed_time = 0.0;
+        self.data.has_started = true;
     }
 
-    fn update(&mut self, raylib: &RaylibHandle, thread: &RaylibThread) {
+    fn update(&mut self, raylib: &mut raylib::RaylibHandle, thread: &RaylibThread) {
         self.elapsed_time += raylib.get_frame_time();
 
         if (!self.start_initiated) {
@@ -102,6 +103,7 @@ impl GameScene for MainMenu {
 
     fn stop(&mut self) {
         self.data.flag_for_finish();
+        self.data.has_started = false;
     }
 
     fn has_started(&self) -> bool {
