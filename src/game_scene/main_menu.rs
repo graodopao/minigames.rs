@@ -103,4 +103,12 @@ impl GameScene for MainMenu {
     fn stop(&mut self) {
         self.data.flag_for_finish();
     }
+
+    fn has_started(&self) -> bool {
+        self.data.has_started
+    }
+
+    fn is_flagged_for_finish(&self) -> bool {
+        self.data.flagged_for_finish
+    }
 }
