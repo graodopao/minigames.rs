@@ -1,5 +1,6 @@
 pub mod main_menu;
 pub mod i_ware;
+pub mod game_over;
 
 use raylib::prelude::*;
 
@@ -45,4 +46,9 @@ pub trait GameScene {
 
     fn has_started(&self) -> bool;
     fn is_flagged_for_finish(&self) -> bool;
+    fn lost(&self) -> bool;
+
+    fn data(&self) -> &SceneData;
+
+    fn new_data(&mut self);
 }

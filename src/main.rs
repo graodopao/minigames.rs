@@ -1,8 +1,9 @@
 mod game_scene;
 
-use std::ptr::null;
-use std::thread::current;
+use std::ops::Range;
+
 use raylib::prelude::*;
+use crate::game_scene::game_over::GameOver;
 use crate::game_scene::GameScene;
 use crate::game_scene::main_menu::MainMenu;
 use crate::game_scene::i_ware::IWare;
@@ -19,7 +20,6 @@ impl GameColors { // Palette from: https://colorhunt.co/palette/e62727f3f2ecdcdc
 }
 
 fn main() {
-    let wow = MainMenu::new();
     let (mut raylib, thread) = raylib::init()
         .size(WIDTH, HEIGHT)
         .title("minigames.rs")
@@ -29,17 +29,28 @@ fn main() {
     raylib.gui_set_font(&font);
 
     // Creating the game list
-    let mut minigame_example: MainMenu = MainMenu::new();
-    let mut i_ware: IWare = IWare::new();
-    let scene_list: [&mut dyn GameScene; 2] = [&mut minigame_example, &mut i_ware];
+    let mut mainmenu = MainMenu::new();
+    let mut gameover = GameOver::new();
 
-    let mut current_scene_index = 1;
+    let mut i_ware: IWare = IWare::new();
+    let mut scene_list: [&mut dyn GameScene; 3] = [&mut mainmenu, &mut gameover, &mut i_ware];
+
+    let mut current_scene_index = 0;
 
     while !raylib.window_should_close() {
 
         if (scene_list[current_scene_index].is_flagged_for_finish()) {
-            todo!("Place change minigames logic here");
-            break;
+            current_scene_index = raylib.get_random_value::<i32>(Range{ start: 3, end: scene_list.len() as i32}) as usize - 1;
+
+            if (scene_list[current_scene_index].lost()) {
+                current_scene_index = 1;
+                
+                reset_minigames(&mut scene_list);
+            }
+        }
+
+        if (!scene_list[current_scene_index].has_started()) {
+            scene_list[current_scene_index].start();
         }
 
         scene_list[current_scene_index].update(&mut raylib, &thread);
@@ -48,5 +59,11 @@ fn main() {
         draw_handle.clear_background(GameColors::CLEAR_TINT);
 
         scene_list[current_scene_index].draw(&mut draw_handle)
+    }
+}
+
+fn reset_minigames(list: &mut [&mut dyn GameScene; 3]) {
+    for scene in list {
+        scene.new_data();
     }
 }

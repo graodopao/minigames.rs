@@ -31,6 +31,7 @@ impl IWare  {
 impl GameScene for IWare {
     fn start(&mut self) {
         self.data.has_started = true;
+        self.timeout_timer = -0.5;
     }
 
     fn update(&mut self, raylib: &mut raylib::RaylibHandle, thread: &RaylibThread) {
@@ -43,6 +44,10 @@ impl GameScene for IWare {
                 self.current_letter = self.random_letter(raylib);
                 self.timeout_timer = -0.5;
             }
+        }
+
+        if (self.timeout_timer > 1.0) {
+            self.stop();
         }
     }
 
@@ -61,6 +66,10 @@ impl GameScene for IWare {
     }
 
     fn stop(&mut self) {
+        self.data.flag_for_finish();
+        if (self.timeout_timer > 1.0) {
+            self.data.lose();
+        }
         self.data.has_started = false;
     }
 
@@ -70,5 +79,15 @@ impl GameScene for IWare {
 
     fn is_flagged_for_finish(&self) -> bool {
         self.data.flagged_for_finish
+    }
+
+    fn lost(&self) -> bool { self.data.lost }
+
+    fn data(&self) -> &SceneData {
+        &self.data
+    }
+
+    fn new_data(&mut self) {
+        self.data = SceneData::new();
     }
 }

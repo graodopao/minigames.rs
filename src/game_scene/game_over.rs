@@ -6,66 +6,68 @@ use raylib::math::Vector2;
 use crate::game_scene::{GameScene, SceneData};
 use crate::{GameColors, HEIGHT, WIDTH};
 
-pub struct MainMenu {
+pub struct GameOver {
     pub data: SceneData,
     pub elapsed_time: f32,
     start_initiated: bool,
     start_tick: f32,
 }
 
-impl MainMenu {
+impl GameOver {
     pub const fn new() -> Self {
         Self{ data:SceneData::new(), elapsed_time: 0.0, start_initiated: false, start_tick: -0.25}
     }
 }
-impl GameScene for MainMenu {
+impl GameScene for GameOver {
 
     fn start(&mut self) {
         self.elapsed_time = 0.0;
-        self.start_initiated = false;
         self.start_tick = -0.25;
+        self.start_initiated = false;
 
         self.data.has_started = true;
     }
 
     fn update(&mut self, raylib: &mut raylib::RaylibHandle, thread: &RaylibThread) {
         self.elapsed_time += raylib.get_frame_time();
-
         if (!self.start_initiated) {
             self.start_initiated = raylib.is_key_pressed(KEY_SPACE);
             return;
         }
 
+        println!("{}", self.elapsed_time);
+
         self.start_tick += raylib.get_frame_time();
         if (self.start_tick < 1.0) { return };
         self.stop();
     }
-    
+
     fn draw(&self, draw_handle: &mut RaylibDrawHandle) {
+        draw_handle.clear_background(GameColors::CONTRAST);
 
         let font =  draw_handle.gui_get_font();
         draw_handle.draw_text_pro(
             &font,
-            "Galactic\nWare.rs",
+            "Game\nOver",
             Vector2::new(0.0, 0.0),
             Vector2::new(0.0, 0.0),
             0.0,
             130.0,
             5.0,
-            GameColors::CONTRAST);
+            GameColors::CLEAR_TINT);
 
         if ((self.elapsed_time * if (!self.start_initiated) { 5.0 } else { 40.0 }).sin() < 0.0) {
-            let text = "- space to start -";
-            let text_len = draw_handle.measure_text(text, 30) as f32;
+            let text = "- space to try again -";
+            let text_len = draw_handle.measure_text(text, 35) as f32;
             draw_handle.draw_text_pro(
                 &font,
                 text,
                 Vector2::new(WIDTH as f32 / 2.0, HEIGHT as f32 * 0.6),
-                Vector2::new(text_len / 2.0, 0.0),
+                Vector2::new(text_len / 2.0 , 0.0),
                 0.0,
                 30.0,
                 5.0,
-                GameColors::CONTRAST);
+                GameColors::CLEAR_TINT);
         }
 
         let smooth_transition = (if (!self.start_initiated) {
